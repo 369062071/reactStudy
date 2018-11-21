@@ -23,6 +23,7 @@ class Register extends React.Component{
     }
 
     hangleRegister () {
+   
         this.props.register(this.state)
     }
 
