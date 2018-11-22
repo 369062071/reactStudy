@@ -2,7 +2,14 @@ import React from 'react'
 import axios from 'axios'
 import {withRouter} from 'react-router-dom'
 // withRouter可以包装任何自定义组件，将react-router 的 history,location,match 三个对象传入。 
+import {loadData} from '../../redux/user.redux'
+import {connect} from 'react-redux'
+
 @withRouter
+@connect(
+    null,
+    {loadData}
+)
 class AuthRoute extends React.Component{
     componentDidMount () {
         // 如果在登录或者注册页面就不用获取登录信息
@@ -15,9 +22,11 @@ class AuthRoute extends React.Component{
         // 获取用户信息
         axios.get('/user/info').then(res =>{
             if (res.status === 200) {
-                console.log(res.data)
+                // console.log(res.data)
                 if (res.data.code === 0) {
                     // 有登陆消息
+                    console.log(111)
+                    this.props.loadData(res.data.data)
                 } else {
                     console.log(this.props.history)
                     this.props.history.push('/login')

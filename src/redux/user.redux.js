@@ -4,13 +4,13 @@ import {getRedirectPath} from '../utils'
 const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
 const ERROR_MSG = 'ERROR_MSG'
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
+const LOAD_DATA = 'LOAD_DATA'
 
 const initState = {
     redirectTo: '',
     isAuth: false,
     msg: '',
     user: '',
-    pwd: '',
     type: ''
 }
 // reducer
@@ -27,6 +27,10 @@ export function user(state = initState, action) {
             return { ...state,
                 isAuth: false,
                 msg: action.msg
+            }
+        case LOAD_DATA:
+            return {
+                ...state,...action.payload
             }
         case LOGIN_SUCCESS:
             return { ...state,
@@ -62,6 +66,29 @@ function errorMsg(msg) {
         type: ERROR_MSG
     }
 }
+
+export function loadData(userinfo) {
+    console.log(userinfo)
+    return {type:LOAD_DATA, payload:userinfo}
+}
+
+export function userinfo () {
+    // 获取用户信息
+    return dispatch => {
+        axios.get('/user/info').then(res => {
+            if (res.status === 200) {
+                if (res.data.code === 0) {
+
+                } else {
+                    this.props.loadData(res.data.data)
+                    this.props.history.push('/login')
+                }
+            }
+        })
+    }
+}
+
+
 
 export function login ({user,pwd}) {
     console.log(4, user,pwd)
