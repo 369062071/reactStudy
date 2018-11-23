@@ -42,13 +42,12 @@ class Login extends React.Component{
             <div>
                 {this.props.redirectTo ? <Redirect to={this.props.redirectTo}></Redirect> : null}
                 <Logo></Logo>
-                <h2>我是的登录页</h2>
                 <WingBlank>
                     <List>
                         {this.props.msg?<p className='error-msg'>{this.props.msg}</p> : null}
                         <InputItem onChange={v=>this.hangleChange('user',v)}>用户</InputItem>
                         <WhiteSpace/>
-                        <InputItem onChange={v=>this.hangleChange('pwd', v)}>密码</InputItem>
+                        <InputItem onChange={v=>this.hangleChange('pwd', v)} type='password'>密码</InputItem>
                     </List>
                     <WhiteSpace/>
                     <Button onClick={this.handleLogin} type='primary'>登录</Button>
