@@ -5,7 +5,7 @@ const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
 const ERROR_MSG = 'ERROR_MSG'
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 const LOAD_DATA = 'LOAD_DATA'
-
+const AUTH_SUCCESS = 'AUTH_SUCCESS'
 const initState = {
     redirectTo: '',
     isAuth: false,
@@ -16,10 +16,9 @@ const initState = {
 // reducer
 export function user(state = initState, action) {
     switch (action.type) {
-        case REGISTER_SUCCESS:
+        case AUTH_SUCCESS:
             return { ...state,
                 msg: '',
-                isAuth: true,
                 redirectTo: getRedirectPath(action.payload),
                 ...action.payload
             }
@@ -32,15 +31,23 @@ export function user(state = initState, action) {
             return {
                 ...state,...action.payload
             }
-        case LOGIN_SUCCESS:
-            return { ...state,
-                msg: '',
-                isAuth: true,
-                redirectTo: getRedirectPath(action.payload),
-                ...action.payload
-            }
+        // case LOGIN_SUCCESS:
+        //     return { ...state,
+        //         msg: '',
+        //         isAuth: true,
+        //         redirectTo: getRedirectPath(action.payload),
+        //         ...action.payload
+        //     }
         default:
             return state
+    }
+}
+
+function authSuccess(obj) {
+    const {pwd,...data} = obj
+    return {
+        type: AUTH_SUCCESS,
+        payload: data
     }
 }
 
@@ -64,6 +71,19 @@ function errorMsg(msg) {
     return {
         msg,
         type: ERROR_MSG
+    }
+}
+
+export function update(data) {
+    return dispatch => {
+        axios.post('/user/update',data).then(res => {
+            if (res.status === 200 && res.data.code === 0) {
+                console.log(res)
+                dispatch(authSuccess(res.data.data))
+            } else {
+                dispatch(errorMsg(res.data.msg))
+            }
+        })
     }
 }
 
@@ -100,7 +120,7 @@ export function login ({user,pwd}) {
         axios.post('/user/login', {user,pwd}).then(res =>{
             if (res.status === 200 && res.data.code === 0) {
                 console.log(res)
-                dispatch(loginSuccess(res.data.data))
+                dispatch(authSuccess(res.data.data))
             } else {
                 dispatch(errorMsg(res.data.msg))
             }
@@ -131,7 +151,7 @@ export function register({
             .then(res => {
                 if (res.status === 200 && res.data.code === 0) {
                     console.log(res)
-                    dispatch(registerSuccess({
+                    dispatch(authSuccess({
                         user,
                         pwd,
                         type
